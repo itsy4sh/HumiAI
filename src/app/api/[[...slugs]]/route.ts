@@ -1,4 +1,5 @@
-import { app } from '@/server';
+
+import { app } from '@/backend';
 
 const handler = app.handle;
 
