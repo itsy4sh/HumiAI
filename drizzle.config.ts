@@ -6,7 +6,4 @@ export default {
   schema: 'src/backend/db/schema.ts',
   out: 'src/backend/db/migrations',
   verbose: true,
-  dbCredentials: {
-    url: process.env.NEXT_PUBLIC_DATABASE_URL!,
-  },
 } satisfies Config;
