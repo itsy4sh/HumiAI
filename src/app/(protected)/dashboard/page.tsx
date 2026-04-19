@@ -1,3 +1,4 @@
+import DashboardWrapper from '@/components/Layouts/Dashboard';
 export default function Dashboard() {
-  return <>HELLO</>;
+  return <DashboardWrapper />;
 }

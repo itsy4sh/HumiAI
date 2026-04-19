@@ -77,7 +77,7 @@ export default function VoiceCompanion() {
         },
         voice: {
           provider: 'vapi', // ← free, no ElevenLabs needed
-          voiceId: 'Elliot',
+          voiceId: 'Tara',
         },
         transcriber: {
           provider: 'deepgram',

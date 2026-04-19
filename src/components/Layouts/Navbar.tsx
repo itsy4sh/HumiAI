@@ -7,7 +7,7 @@ export default function Navbar() {
     <section className='flex w-full items-center justify-between gap-4'>
       {/* Logo */}
       <div>
-        <span className='font-display text-2xl'>HUMI</span>
+        <span className='font-display text-2xl'>REN</span>
       </div>
 
       {/* Search (hidden on small screens if needed) */}

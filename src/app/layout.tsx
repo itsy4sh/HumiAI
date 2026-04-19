@@ -28,7 +28,7 @@ const display = Pixelify_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Humi Ai',
+  title: 'Ren',
   description: 'Voice First Mental Health Platform',
 };
 
