@@ -1,3 +1,5 @@
+import { CRISIS_KEYWORDS } from './promt';
+
 export function getLastUserMessage(messages: any[] = []) {
   const lastUser = [...messages].reverse().find((m) => m.role === 'user');
   return lastUser?.content?.toString() || '';
