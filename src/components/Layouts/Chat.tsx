@@ -10,14 +10,14 @@ import { Button } from '../ui/button';
 import { Orb } from '../ui/orb';
 import { TextShimmer } from '../ui/text-shimmer';
 
-type Status = 'idle' | 'connecting' | 'active' | 'error';
+type AgentStatus = 'idle' | 'connecting' | 'active' | 'error';
 
 const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_KEY!;
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export default function VoiceCompanion() {
   const vapiRef = useRef<Vapi | null>(null);
-  const [status, setStatus] = useState<Status>('idle');
+  const [AgentStatus, setAgentStatus] = useState<AgentStatus>('idle');
   const [isMuted, setIsMuted] = useState(false);
   const [transcript, setTranscript] = useState<
     { role: string; text: string }[]
@@ -27,11 +27,11 @@ export default function VoiceCompanion() {
   useEffect(() => {
     const vapi = new Vapi(VAPI_PUBLIC_KEY);
     vapiRef.current = vapi;
-    vapi.on('call-start', () => setStatus('active'));
-    vapi.on('call-end', () => setStatus('idle'));
+    vapi.on('call-start', () => setAgentStatus('active'));
+    vapi.on('call-end', () => setAgentStatus('idle'));
     vapi.on('error', (e) => {
       setError(String(e));
-      setStatus('error');
+      setAgentStatus('error');
     });
     vapi.on('message', (msg) => {
       if (msg.type !== 'transcript') {
@@ -65,7 +65,7 @@ export default function VoiceCompanion() {
     }
     setError(null);
     setTranscript([]);
-    setStatus('connecting');
+    setAgentStatus('connecting');
     try {
       // await vapiRef.current.start(VAPI_ASSISTANT_ID);
       await vapiRef.current.start({
@@ -87,15 +87,15 @@ export default function VoiceCompanion() {
       });
     } catch (e) {
       setError(String(e));
-      setStatus('error');
+      setAgentStatus('error');
     }
   };
 
   const stopCall = () => {
     vapiRef.current?.stop();
   };
-  const isActive = status === 'active';
-  const isConnecting = status === 'connecting';
+  const isActive = AgentStatus === 'active';
+  const isConnecting = AgentStatus === 'connecting';
 
   const toggleMute = () => {
     setIsMuted((prev) => !prev);
@@ -108,7 +108,7 @@ export default function VoiceCompanion() {
           <div>HUMI</div>
           <Status
             className='rounded-full p-3 text-md'
-            status={error ? 'error' : status}
+            status={error ? 'error' : AgentStatus}
           >
             <StatusIndicator />
             <StatusLabel />
