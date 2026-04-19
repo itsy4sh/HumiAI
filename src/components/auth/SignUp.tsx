@@ -18,7 +18,7 @@ export default function SignUp() {
     },
     onSubmit: async ({ value, formApi }) => {
       try {
-        const { _, error } = await authClient.signUp.email(
+        const { data, error } = await authClient.signUp.email(
           {
             name: value.username,
             email: value.email,
@@ -29,7 +29,7 @@ export default function SignUp() {
             onSuccess: () => {
               toast('Sign-Up successfull', {
                 position: 'bottom-left',
-                description: 'Welcome',
+                description: `Welcom ${data?.user.name || 'user'}`,
               });
             },
             onError: (ctx) => {
