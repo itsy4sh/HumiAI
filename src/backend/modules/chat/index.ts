@@ -1,9 +1,10 @@
 /** biome-ignore-all lint/suspicious/useAwait: <explanation */
 import { Elysia } from 'elysia';
-import { createChunk } from './chunk';
-import { getLastUserMessage, isCrisis } from './crisis';
+// import { createChunk } from './chunk';
+// import { getLastUserMessage, isCrisis } from './crisis';
 import { streamLLM } from './llm';
-import { CRISIS_MESSAGE } from './promt';
+
+// import { CRISIS_MESSAGE } from './promt';
 
 const app = new Elysia({ aot: false });
 
@@ -39,31 +40,31 @@ app.post('/chat/completions', async ({ body, set }) => {
 
         /* Crisis Detection */
 
-        const userText = getLastUserMessage(messages);
+        // const userText = getLastUserMessage(messages);
 
-        if (isCrisis(userText)) {
-          const id = 'chatcmpl-' + crypto.randomUUID();
+        // if (isCrisis(userText)) {
+        //   const id = 'chatcmpl-' + crypto.randomUUID();
 
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify(
-                createChunk(id, 'safety', CRISIS_MESSAGE, null),
-              )}\n\n`,
-            ),
-          );
+        //   controller.enqueue(
+        //     encoder.encode(
+        //       `data: ${JSON.stringify(
+        //         createChunk(id, 'safety', CRISIS_MESSAGE, null),
+        //       )}\n\n`,
+        //     ),
+        //   );
 
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify(
-                createChunk(id, 'safety', '', 'stop'),
-              )}\n\n`,
-            ),
-          );
+        //   controller.enqueue(
+        //     encoder.encode(
+        //       `data: ${JSON.stringify(
+        //         createChunk(id, 'safety', '', 'stop'),
+        //       )}\n\n`,
+        //     ),
+        //   );
 
-          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-          controller.close();
-          return;
-        }
+        //   controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        //   controller.close();
+        //   return;
+        // }
 
         /* Normal Stream */
 

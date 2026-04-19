@@ -1,8 +1,8 @@
-import VoiceCompanion from '@/components/voice';
+import VoiceCompanion from '@/components/Layouts/Chat';
 
 export default function Session() {
   return (
-    <div>
+    <div className='h-full'>
       <VoiceCompanion />
     </div>
   );
