@@ -1,39 +1,20 @@
 /** biome-ignore-all lint/suspicious/useAwait: <explanation */
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
+import { createChunk } from './chunk';
+
 
 export async function* streamLLM(messages: any[]) {
   const result = streamText({
     model: google('gemini-2.5-flash'),
-    messages,
+    messages: [{ role: 'system', content: THERAPIST_PROMPT }, ...messages],
   });
+
   const id = 'chatcmpl-' + crypto.randomUUID();
+
   for await (const textPart of result.textStream) {
-    yield {
-      id,
-      object: 'chat.completion.chunk',
-      created: Math.floor(Date.now() / 1000),
-      model: 'gemini-2.5-flash',
-      choices: [
-        {
-          index: 0,
-          delta: { content: textPart },
-          finish_reason: null,
-        },
-      ],
-    };
+    yield createChunk(id, 'gemini-2.5-flash', textPart, null);
   }
-  yield {
-    id,
-    object: 'chat.completion.chunk',
-    created: Math.floor(Date.now() / 1000),
-    model: 'gemini-2.5-flash',
-    choices: [
-      {
-        index: 0,
-        delta: {},
-        finish_reason: 'stop',
-      },
-    ],
-  };
+
+  yield createChunk(id, 'gemini-2.5-flash', '', 'stop');
 }
