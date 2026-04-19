@@ -1,55 +1,16 @@
+/** biome-ignore-all lint/suspicious/useAwait: <explanation */
 import { Elysia } from 'elysia';
+import { streamLLM } from './llm';
 
 const app = new Elysia({ aot: false });
-
 // Logger
 function log(...args: any[]) {
   console.log('[LOG]', ...args);
 }
+/* ---------------------------------- */
+/* ROUTE */
+/* ---------------------------------- */
 
-// Mock SSE stream generator
-async function* mockStream(messages: any[]) {
-  const lastUser = [...messages].reverse().find((m) => m.role === 'user');
-
-  const reply = `Hey you yes you said: '${
-    lastUser?.content ?? 'nothing'
-  }'. streaming works!`;
-
-  for (const word of reply.split(' ')) {
-    const chunk = {
-      id: 'chatcmpl-test',
-      object: 'chat.completion.chunk',
-      created: Math.floor(Date.now() / 1000),
-      model: 'mock',
-      choices: [
-        {
-          index: 0,
-          delta: { content: word + ' ' },
-          finish_reason: null,
-        },
-      ],
-    };
-
-    yield chunk;
-    await new Promise((r) => setTimeout(r, 40));
-  }
-
-  yield {
-    id: 'chatcmpl-test',
-    object: 'chat.completion.chunk',
-    created: Math.floor(Date.now() / 1000),
-    model: 'mock',
-    choices: [
-      {
-        index: 0,
-        delta: {},
-        finish_reason: 'stop',
-      },
-    ],
-  };
-}
-
-// Route
 app.post('/chat/completions', async ({ body, set }) => {
   const requestData = { ...(body as any) };
 
@@ -70,42 +31,27 @@ app.post('/chat/completions', async ({ body, set }) => {
       async start(controller) {
         const encoder = new TextEncoder();
 
-        for await (const chunk of mockStream(requestData.messages || [])) {
+        for await (const chunk of streamLLM(requestData.messages || [])) {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`),
           );
         }
-
         controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-
         controller.close();
       },
     });
   }
-
-  // NON-STREAMING RESPONSE
-  set.headers['Content-Type'] = 'application/json';
-
-  return {
-    id: 'chatcmpl-test',
-    object: 'chat.completion',
-    choices: [
-      {
-        index: 0,
-        message: {
-          role: 'assistant',
-          content: '[test] non-streaming response works!',
-        },
-        finish_reason: 'stop',
-      },
-    ],
-  };
 });
 
-// Health check
+/* ---------------------------------- */
+/* HEALTH CHECK */
+/* ---------------------------------- */
 app.get('/chat/completions', () => ({
   status: 'ok',
-  server: 'Elysia mock OpenAI-compatible endpoint',
+  server: 'custom-llm endpoint',
 }));
 
 export default app;
+// const port = Number(process.env.PORT || 5000);
+// app.listen(port);
+// console.log(`🚀 Running on http://0.0.0.0:${port}`);

@@ -68,6 +68,7 @@ export default function VoiceCompanion() {
       await vapiRef.current.start({
         model: {
           provider: 'custom-llm',
+          // url: 'https://339488dd-91d5-40b1-89a9-b6f8412b5d2f-00-3g4twogggd93m.pike.repl.co/chat/completions',
           url: `${BACKEND_URL}/api/chat/completions`,
           model: 'test-v1',
         },
