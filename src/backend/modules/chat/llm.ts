@@ -2,12 +2,12 @@
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { createChunk } from './chunk';
-
+import { SYSTEM_PROMPT } from './promt';
 
 export async function* streamLLM(messages: any[]) {
   const result = streamText({
     model: google('gemini-2.5-flash'),
-    messages: [{ role: 'system', content: THERAPIST_PROMPT }, ...messages],
+    messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
   });
 
   const id = 'chatcmpl-' + crypto.randomUUID();
