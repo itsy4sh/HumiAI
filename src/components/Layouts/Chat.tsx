@@ -3,6 +3,14 @@
 import Vapi from '@vapi-ai/web';
 import { Mic, MicOff, Phone, PhoneOff } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '../kibo-ui/spinner';
 import { Status, StatusIndicator, StatusLabel } from '../kibo-ui/status';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -11,12 +19,27 @@ import { Orb } from '../ui/orb';
 import { TextShimmer } from '../ui/text-shimmer';
 
 type AgentStatus = 'idle' | 'connecting' | 'active' | 'error';
+type AgentVoice =
+  | 'Hana'
+  | 'Elliot'
+  | 'Kylie'
+  | 'Rohan'
+  | 'Lily'
+  | 'Savannah'
+  | 'Neha'
+  | 'Cole'
+  | 'Harry'
+  | 'Paige'
+  | 'Spencer'
+  | 'Leah'
+  | 'Tara';
 
 const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_KEY!;
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export default function VoiceCompanion() {
   const vapiRef = useRef<Vapi | null>(null);
+  const [AgentVoice, setAgentVoice] = useState<Voice>('Hana');
   const [AgentStatus, setAgentStatus] = useState<AgentStatus>('idle');
   const [isMuted, setIsMuted] = useState(false);
   const [transcript, setTranscript] = useState<
@@ -77,7 +100,7 @@ export default function VoiceCompanion() {
         },
         voice: {
           provider: 'vapi', // ← free, no ElevenLabs needed
-          voiceId: 'Tara',
+          voiceId: AgentVoice,
         },
         transcriber: {
           provider: 'deepgram',
@@ -105,7 +128,25 @@ export default function VoiceCompanion() {
       <div className='flex flex-col gap-10 p-2'>
         {/*Status bar*/}
         <div className='flex w-70 items-center justify-between'>
-          <div>HUMI</div>
+          <div>
+            <Select
+              defaultValue='Hana'
+              onValueChange={(value) => setAgentVoice(value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className='ml-20' position={'popper'}>
+                <SelectGroup className='bg-background'>
+                  <SelectItem value='Hana'>Hana</SelectItem>
+                  <SelectItem value='Tara'>Tara</SelectItem>
+                  <SelectItem value='Harry'>Harry</SelectItem>
+                  <SelectItem value='Kyle'>Kyle</SelectItem>
+                  <SelectItem value='Spencer'>Spencer</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
           <Status
             className='rounded-full p-3 text-md'
             status={error ? 'error' : AgentStatus}
