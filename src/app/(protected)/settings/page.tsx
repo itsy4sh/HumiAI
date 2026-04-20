@@ -1,3 +1,5 @@
+import UserProfilePage from '@/components/Layouts/Settings';
+
 export default function Settings() {
-  return <>HELLO</>;
+  return <UserProfilePage />;
 }
